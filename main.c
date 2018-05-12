@@ -91,11 +91,23 @@ void initRegisters(){
 }
 
 void mixing(){
-    //TODO
+
+    z[t] = a();
+    for(int i = 0; i<=88; ++i) {
+        B[t + 1][i] = B[t][i + 1];
+    }
+
+    B[t+1][89] = z[t] ^ NFSR2();
+
+    for(int i = 0; i <= 29; ++i){
+        S[t+1][i] = S[t][i+1];
+    }
+    S[t+1][30] = z[t] ^ NFSR1();
 }
 
-void a(){
+u_int8_t a(){
     //TODO
+    return (u_int8_t) 0;
 }
 
 u_int8_t NFSR2(){
