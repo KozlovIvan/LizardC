@@ -109,7 +109,7 @@ u_int8_t NFSR2(){
 }
 
 u_int8_t NFSR1(){
-    
+
     return \
     S[t][0]  ^ S[t][2]  ^ \
     S[t][5]  ^ S[t][6]  ^ \
@@ -158,11 +158,32 @@ u_int8_t NFSR1(){
 }
 
 void keyadd(){
-    //TODO
+
+    for(int i = 0; i <= 89; ++i){
+        B[129][i] =  B[128][i] ^ K[i];
+    }
+
+    for(int i = 0; i <= 29; ++i){
+        S[129][i] = S[128][i] ^ K[i+90];
+    }
+
+    S[129][30] = 1;
 }
 
 void diffusion(){
-    //TODO
+
+    for(int i = 0; i <= 88; ++i){
+        B[t+1][i] = B[t][i+1];
+    }
+
+    B[t+1][89] = NFSR2();
+
+    for(int i = 0; i <= 29; ++i){
+        S[t+1][i] = S[t][i+1];
+    }
+    
+    S[t+1][30] = NFSR1();
+
 }
 
 void keysteamGeneration(/*length*/){
