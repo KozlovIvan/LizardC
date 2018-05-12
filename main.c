@@ -5,25 +5,35 @@
  * Input formats must be 120 bit key as 30 hex values and 64 bit IV as 16 hex values.
  * The keystream output length can be chosen between 1 bit and 10000 bits.
  */
-//key bin
+
 u_int8_t K[120];
-//iv bin
 u_int8_t IV[64];
-
-//B
+u_int8_t z[258];
+u_int8_t L[258];
+u_int8_t Q[258];
+u_int8_t T[258];
+u_int8_t Ttilde[258];
 u_int8_t B[258][90];
-//S
 u_int8_t S[258][31];
-
-// bool a257 = false;
 u_int8_t a257 = 0;
 int t = 0;
 
 
 
 
-void _construct(/*key, IV, length*/){
-    //TODO
+void _construct(u_int8_t  *key, u_int8_t *iv, int length){
+
+    for(int i = 0; i < 259; ++i){
+        z[i] = 0;
+        L[i] = 0;
+        Q[i] = 0;
+        T[i] = 0;
+        Ttilde[i] = 0;
+        _initialization(key, iv);
+    }
+    if(length > 0){
+        keysteamGeneration(length);
+    }
 }
 
 void _initialization(u_int8_t *key, u_int8_t *iv){
@@ -76,7 +86,7 @@ void initRegisters(){
        S[0][i] = K[i+90];
     }
 
-   S[0][29] = K[119] ^ 1;
+   S[0][29] = K[119] ^ (u_int8_t )1;
    S[0][30] = 1;
 }
 
@@ -181,12 +191,12 @@ void diffusion(){
     for(int i = 0; i <= 29; ++i){
         S[t+1][i] = S[t][i+1];
     }
-    
+
     S[t+1][30] = NFSR1();
 
 }
 
-void keysteamGeneration(/*length*/){
+void keysteamGeneration(int length){
     //TODO
 }
 
