@@ -3,5 +3,5 @@ project(Lizard)
 
 set(CMAKE_C_STANDARD 99)
 
-set(SOURCE_FILES main.c)
+set(SOURCE_FILES main.c lizard.h)
 add_executable(Lizard ${SOURCE_FILES})
