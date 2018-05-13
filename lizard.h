@@ -18,6 +18,7 @@ u_int8_t NFSR2();
 void _construct(u_int8_t  *key, u_int8_t *iv, int length);
 void _initialization(u_int8_t *key, u_int8_t *iv);
 void keysteamGeneration(int length);
+u_int8_t a();
 
 
 #endif //LIZARD_LIZARD_H
