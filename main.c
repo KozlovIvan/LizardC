@@ -87,7 +87,7 @@ void initRegisters(){
        S[0][i] = K[i+90];
     }
 
-   S[0][29] = K[119] ^ (u_int8_t )1;
+   S[0][29] = K[119] ^ (uint8_t )1;
    S[0][30] = 1;
 }
 
@@ -238,13 +238,17 @@ void diffusion(){
 }
 
 void keysteamGeneration(int length){
-    //TODO
-    /*$this->keystream = array();
-		for ($i = 1; $i <= $length; $i++) {
-			$this->keystream[] = $this->a();
-			$this->diffusion();
-			$this->t++;
-		*/
+
+    for(int i = 0 ; i <=258; ++i){
+        keystream[i] = 0;
+    }
+
+    for(int i = 0; i <= length; ++i){
+        keystream[i] = a();
+        diffusion();
+        ++t;
+    }
+
 
 }
 
