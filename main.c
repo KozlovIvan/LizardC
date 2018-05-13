@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "lizard.h"
 #include "stdint.h"
 /*
@@ -18,6 +19,7 @@ uint8_t S[258][31];
 uint8_t a257 = 0;
 int t = 0;
 uint8_t keystream[258];
+
 
 
 
@@ -248,16 +250,35 @@ void keysteamGeneration(int length){
         diffusion();
         ++t;
     }
-
-
 }
 
-void keystreamGenerationSpecification(/*length*/){
-    //TODO
+uint8_t* keystreamGenerationSpecification(int length){
+
+    if(length <= 0){
+        return  NULL;
+    }
+    int length_t = length - 1;
+    if (!a257){
+        z[t] = a();
+        a257 = 1;
+        --length_t;
+    }
+    for(int i = 0; i <= length_t; ++i){
+        diffusion();
+        ++t;
+        z[t] = a();
+    }
+    uint8_t* ret_slice = calloc(length, sizeof(uint8_t));
+
+    for(int i = 0; i<length; ++i){
+        ret_slice[i] = z[257 - (length-1) + i];
+    }
+
+    return ret_slice;
 }
 
-void getKeystream(){
-    //TODO
+uint8_t* getKeystream(){
+    return keystream;
 }
 
 void binArray2hex(/*bin*/){
