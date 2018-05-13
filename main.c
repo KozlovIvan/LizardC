@@ -1,27 +1,28 @@
 #include <stdio.h>
 #include "lizard.h"
-
+#include "stdint.h"
 /*
  * Input formats must be 120 bit key as 30 hex values and 64 bit IV as 16 hex values.
  * The keystream output length can be chosen between 1 bit and 10000 bits.
  */
 
-u_int8_t K[120];
-u_int8_t IV[64];
-u_int8_t z[258];
-u_int8_t L[258];
-u_int8_t Q[258];
-u_int8_t T[258];
-u_int8_t Ttilde[258];
-u_int8_t B[258][90];
-u_int8_t S[258][31];
-u_int8_t a257 = 0;
+uint8_t K[120];
+uint8_t IV[64];
+uint8_t z[258];
+uint8_t L[258];
+uint8_t Q[258];
+uint8_t T[258];
+uint8_t Ttilde[258];
+uint8_t B[258][90];
+uint8_t S[258][31];
+uint8_t a257 = 0;
 int t = 0;
+uint8_t keystream[258];
 
 
 
 
-void _construct(u_int8_t  *key, u_int8_t *iv, int length){
+void _construct(uint8_t  *key, uint8_t *iv, int length){
 
     for(int i = 0; i < 259; ++i){
         z[i] = 0;
@@ -36,7 +37,7 @@ void _construct(u_int8_t  *key, u_int8_t *iv, int length){
     }
 }
 
-void _initialization(u_int8_t *key, u_int8_t *iv){
+void _initialization(uint8_t *key, uint8_t *iv){
 
     //Phase 1
     loadkey(key);
@@ -59,14 +60,14 @@ void _initialization(u_int8_t *key, u_int8_t *iv){
 
 }
 
-void loadkey(u_int8_t *key){
+void loadkey(uint8_t *key){
 
     for (int i = 0; i < 119; ++i){
         K[i] = key[i];
     }
 }
 
-void loadIV(u_int8_t *iv){
+void loadIV(uint8_t *iv){
     for (int i = 0; i < 63; ++i){
         IV[i] = iv[i];
     }
@@ -105,7 +106,7 @@ void mixing(){
     S[t+1][30] = z[t] ^ NFSR1();
 }
 
-u_int8_t a(){
+uint8_t a(){
 
     L[t] = B[t][7]  ^ B[t][11] ^ \
              B[t][30] ^ B[t][40] ^ \
@@ -141,7 +142,7 @@ u_int8_t a(){
 		return L[t] ^ Q[t] ^ T[t] ^ Ttilde[t];
 }
 
-u_int8_t NFSR2(){
+uint8_t NFSR2(){
 
     return \
     S[t][0]  ^ B[t][0]  ^ \
@@ -161,7 +162,7 @@ u_int8_t NFSR2(){
     B[t][81] * B[t][83];
 }
 
-u_int8_t NFSR1(){
+uint8_t NFSR1(){
 
     return \
     S[t][0]  ^ S[t][2]  ^ \
@@ -238,6 +239,13 @@ void diffusion(){
 
 void keysteamGeneration(int length){
     //TODO
+    /*$this->keystream = array();
+		for ($i = 1; $i <= $length; $i++) {
+			$this->keystream[] = $this->a();
+			$this->diffusion();
+			$this->t++;
+		*/
+
 }
 
 void keystreamGenerationSpecification(/*length*/){
