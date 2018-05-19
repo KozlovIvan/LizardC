@@ -1,31 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h>
 #include "lizard.h"
-#include "stdint.h"
 /*
  * Input formats must be 120 bit key as 30 hex values and 64 bit IV as 16 hex values.
  * The keystream output length can be chosen between 1 bit and 10000 bits.
  */
 
+
 uint8_t K[120];
 uint8_t IV[64];
-uint8_t z[258];
-uint8_t L[258];
-uint8_t Q[258];
-uint8_t T[258];
-uint8_t Ttilde[258];
-uint8_t B[258][90];
-uint8_t S[258][31];
+uint8_t z[KEYSTREAM_SIZE];
+uint8_t L[KEYSTREAM_SIZE+128];
+uint8_t Q[KEYSTREAM_SIZE+128];
+uint8_t T[KEYSTREAM_SIZE+128];
+uint8_t Ttilde[KEYSTREAM_SIZE+128];
+uint8_t B[KEYSTREAM_SIZE+258][90];
+uint8_t S[KEYSTREAM_SIZE+258][31];
 uint8_t a257 = 0;
 int t = 0;
-uint8_t keystream[258];
+uint8_t keystream[KEYSTREAM_SIZE];
 
 
 
 
 void _construct(uint8_t  *key, uint8_t *iv, int length){
 
-    for(int i = 0; i < 259; ++i){
+    for(int i = 0; i <= KEYSTREAM_SIZE+128; ++i){
         z[i] = 0;
         L[i] = 0;
         Q[i] = 0;
@@ -240,7 +241,7 @@ void diffusion(){
 
 void keysteamGeneration(int length){
 
-    for(int i = 0 ; i <=258; ++i){
+    for(int i = 0 ; i <=KEYSTREAM_SIZE+128; ++i){
         keystream[i] = 0;
     }
 
@@ -280,15 +281,36 @@ uint8_t* getKeystream(){
     return keystream;
 }
 
-char* binArray2hex(uint8_t * bin, int size){
-    //TODO
-    return 0;
+char* binArray2hex(uint8_t * bin, int size) {
+    char * str = malloc(30);
+    for (int i = 0; i < 30; i++) {
+        int val = bin[i*4]*8 + bin[i*4+1]*4 + bin[i*4+2]*2 + bin[i*4+3]*1;
+        sprintf(str+i, "%x", val);
+    }
+    return str;
 }
 
-void hex2binArray(/*hex*/){
-    //TODO
+uint8_t hex2int(char ch)
+{
+    if (ch >= '0' && ch <= '9')
+        return (ch - '0');
+    if (ch >= 'A' && ch <= 'F')
+        return (ch - 'A' + 10);
+    if (ch >= 'a' && ch <= 'f')
+        return (ch - 'a' + 10);
+    return -1;
 }
 
+void hex2binArray(/*unsigned*/ char* hex, uint8_t * bin) {
+    for (int i = 0; i < strlen(hex); ++i){
+        int val = hex2int(hex[i]);
+
+        bin[i*4 + 3] = val & 1;
+        bin[i*4 + 2] = (val >> 1) & 1;
+        bin[i*4 + 1] = (val >> 2) & 1;
+        bin[i*4 + 0] = (val >> 3) & 1;
+    }
+}
 
 int main() {
 
