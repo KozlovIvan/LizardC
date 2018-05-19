@@ -6,7 +6,7 @@
 #ifndef LIZARD_LIZARD_H
 #define LIZARD_LIZARD_H
 
-#define KEYSTREAM_SIZE 128
+#define KEYSTREAM_SIZE 258
 
 void loadkey(uint8_t *key);
 void loadIV(uint8_t *iv);
@@ -22,5 +22,7 @@ void keysteamGeneration(int length);
 uint8_t* keystreamGenerationSpecification(int length);
 uint8_t a();
 char* binArray2hex(uint8_t * bin, int size);
+char* binArray2hex(uint8_t * bin, int size);
+uint8_t hex2int(char ch);
 
 #endif //LIZARD_LIZARD_H
