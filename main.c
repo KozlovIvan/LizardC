@@ -10,23 +10,24 @@
 
 uint8_t K[120];
 uint8_t IV[64];
-uint8_t z[128];
-uint8_t L[256];
-uint8_t Q[256];
-uint8_t T[256];
-uint8_t Ttilde[256];
-uint8_t B[386][90];
-uint8_t S[386][31];
+uint8_t z[KEYSTREAM_SIZE];
+uint8_t L[KEYSTREAM_SIZE+128];
+uint8_t Q[KEYSTREAM_SIZE+128];
+uint8_t T[KEYSTREAM_SIZE+128];
+uint8_t Ttilde[KEYSTREAM_SIZE+128];
+uint8_t B[KEYSTREAM_SIZE+258][90];
+uint8_t S[KEYSTREAM_SIZE+258][31];
 uint8_t a257 = 0;
 int t = 0;
-uint8_t keystream[128];
+uint8_t keystream[KEYSTREAM_SIZE];
 
 
 
 void _construct(uint8_t  *key, uint8_t *iv, int length){
-
+    for (int i =0;i<128; ++i){
+        z[i]=0;
+    }
     for(int i = 0; i <= 256; ++i){
-        z[i] = 0;
         L[i] = 0;
         Q[i] = 0;
         T[i] = 0;
@@ -63,13 +64,13 @@ void _initialization(uint8_t *key, uint8_t *iv){
 
 void loadkey(uint8_t *key){
 
-    for (int i = 0; i < 119; ++i){
+    for (int i = 0; i <= 119; ++i){
         K[i] = key[i];
     }
 }
 
 void loadIV(uint8_t *iv){
-    for (int i = 0; i < 63; ++i){
+    for (int i = 0; i <= 63; ++i){
         IV[i] = iv[i];
     }
 }
@@ -240,7 +241,7 @@ void diffusion(){
 
 void keysteamGeneration(int length){
 
-    for(int i = 0 ; i <256; ++i){
+    for(int i = 0 ; i <KEYSTREAM_SIZE+128; ++i){
         keystream[i] = 0;
     }
 
