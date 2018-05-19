@@ -282,8 +282,8 @@ uint8_t* getKeystream(){
 }
 
 char* binArray2hex(uint8_t * bin, int size) {
-    char * str = malloc(30);
-    for (int i = 0; i < 30; i++) {
+    char * str = malloc(LENGTH_TEST/4);
+    for (int i = 0; i < (LENGTH_TEST/4); i++) {
         int val = bin[i*4]*8 + bin[i*4+1]*4 + bin[i*4+2]*2 + bin[i*4+3]*1;
         sprintf(str+i, "%x", val);
     }
@@ -292,12 +292,12 @@ char* binArray2hex(uint8_t * bin, int size) {
 
 uint8_t hex2int(char ch) {
     if (ch >= '0' && ch <= '9')
-        return (ch - '0');
+        return (uint8_t) (ch - '0');
     if (ch >= 'A' && ch <= 'F')
-        return (ch - 'A' + 10);
+        return (uint8_t) (ch - 'A' + 10);
     if (ch >= 'a' && ch <= 'f')
-        return (ch - 'a' + 10);
-    return -1;
+        return (uint8_t) (ch - 'a' + 10);
+    return (uint8_t) -1;
 }
 
 void hex2binArray(char* hex, uint8_t * bin) {
@@ -314,11 +314,10 @@ void hex2binArray(char* hex, uint8_t * bin) {
 int main() {
     char *Kstr = "0000000000000000FFFFFFFFFFFFFF";
     char *IVstr = "FFFFFFFFFFFFFFFF";
-    int lengthtest = 128;
     uint8_t Kbin[120];
     hex2binArray(Kstr, Kbin);
     uint8_t IVbin[64];
     hex2binArray(IVstr, IVbin);
-    _construct(Kbin, IVbin, lengthtest);
+    _construct(Kbin, IVbin, LENGTH_TEST);
     printf("%s\n", binArray2hex(keystream, 0));
 }

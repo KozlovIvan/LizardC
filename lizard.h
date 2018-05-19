@@ -6,7 +6,8 @@
 #ifndef LIZARD_LIZARD_H
 #define LIZARD_LIZARD_H
 
-#define KEYSTREAM_SIZE 258
+#define KEYSTREAM_SIZE 128
+#define LENGTH_TEST 128
 
 void loadkey(uint8_t *key);
 void loadIV(uint8_t *iv);
