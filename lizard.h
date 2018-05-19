@@ -19,6 +19,6 @@ void _initialization(uint8_t *key, uint8_t *iv);
 void keysteamGeneration(int length);
 uint8_t* keystreamGenerationSpecification(int length);
 uint8_t a();
-
+char* binArray2hex(uint8_t * bin, int size);
 
 #endif //LIZARD_LIZARD_H

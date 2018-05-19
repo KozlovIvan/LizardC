@@ -23,7 +23,6 @@ uint8_t keystream[258];
 
 
 
-
 void _construct(uint8_t  *key, uint8_t *iv, int length){
 
     for(int i = 0; i < 259; ++i){
@@ -281,8 +280,9 @@ uint8_t* getKeystream(){
     return keystream;
 }
 
-void binArray2hex(/*bin*/){
+char* binArray2hex(uint8_t * bin, int size){
     //TODO
+    return 0;
 }
 
 void hex2binArray(/*hex*/){
@@ -291,6 +291,5 @@ void hex2binArray(/*hex*/){
 
 
 int main() {
-    //TODO
-    return 0;
+
 }
