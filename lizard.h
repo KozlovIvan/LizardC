@@ -25,5 +25,9 @@ uint8_t a();
 char* binArray2hex(uint8_t * bin, int size);
 char* binArray2hex(uint8_t * bin, int size);
 uint8_t hex2int(char ch);
+void test();
+void test1();
+void test2();
+void test3();
 
 #endif //LIZARD_LIZARD_H

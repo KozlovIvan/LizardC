@@ -312,12 +312,62 @@ void hex2binArray(char* hex, uint8_t * bin) {
 }
 
 int main() {
+    test();
+}
+
+void test1(){
+    printf("Test 1\n");
     char *Kstr = "0000000000000000FFFFFFFFFFFFFF";
     char *IVstr = "FFFFFFFFFFFFFFFF";
     uint8_t Kbin[120];
+    char* test= "4d190941816f942358f0d164f4eceb09";
     hex2binArray(Kstr, Kbin);
     uint8_t IVbin[64];
     hex2binArray(IVstr, IVbin);
     _construct(Kbin, IVbin, LENGTH_TEST);
-    printf("%s\n", binArray2hex(keystream, 0));
+    char* result = binArray2hex(keystream, 0);
+    printf("Generated keystream: %s\n", result);
+    free(result);
+    printf("Correct keystream:   %s\n", test);
+    t=0;
+}
+
+void test2(){
+    printf("Test 2\n");
+    char *Kstr = "7893257383493a0b0f030939409205";
+    char *IVstr = "6969696969696969";
+    uint8_t Kbin[120];
+    char* test= "50161073d0e2cb919f09707b98ceea99";
+    hex2binArray(Kstr, Kbin);
+    uint8_t IVbin[64];
+    hex2binArray(IVstr, IVbin);
+    _construct(Kbin, IVbin, LENGTH_TEST);
+    char* result = binArray2hex(keystream, 0);
+    printf("Generated keystream: %s\n", result);
+    free(result);
+    printf("Correct keystream:   %s\n", test);
+    t=0;
+}
+
+void test3(){
+    printf("Test 3\n");
+    char *Kstr = "12342f5f1234f23f234f5f234f1f41";
+    char *IVstr = "8498723987987f91";
+    uint8_t Kbin[120];
+    char* test= "e9eac69c4871f44edb1885e00270e5cc";
+    hex2binArray(Kstr, Kbin);
+    uint8_t IVbin[64];
+    hex2binArray(IVstr, IVbin);
+    _construct(Kbin, IVbin, LENGTH_TEST);
+    char* result = binArray2hex(keystream, 0);
+    printf("Generated keystream: %s\n", result);
+    free(result);
+    printf("Correct keystream:   %s\n", test);
+    t=0;
+}
+
+void test(){
+    test1();
+    test2();
+    test3();
 }
