@@ -6,7 +6,17 @@
 
 #IncludeRegexTransform: 
 
+/Users/ivankozlov/LizardC/lizard.h
+stdint.h
+-
+
 /Users/ivankozlov/LizardC/main.c
 stdio.h
 -
+stdlib.h
+-
+memory.h
+-
+lizard.h
+/Users/ivankozlov/LizardC/lizard.h
 

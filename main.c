@@ -210,6 +210,7 @@ uint8_t NFSR1(){
     S[t][21] * S[t][22];
 }
 
+
 void keyadd(){
 
     for(int i = 0; i <= 89; ++i){
@@ -313,6 +314,7 @@ void hex2binArray(char* hex, uint8_t * bin) {
 
 int main() {
     test();
+    return 0;
 }
 
 void test1(){
