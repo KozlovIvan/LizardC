@@ -22,7 +22,7 @@ void _initialization(uint8_t *key, uint8_t *iv);
 void keysteamGeneration(int length);
 uint8_t* keystreamGenerationSpecification(int length);
 uint8_t a();
-char* binArray2hex(uint8_t * bin, int size);
+char* binArray2hex(uint8_t * bin);
 void hex2binArray(char* hex, uint8_t * bin);
 uint8_t hex2int(char ch);
 void test();

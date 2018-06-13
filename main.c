@@ -282,7 +282,7 @@ uint8_t* getKeystream(){
     return keystream;
 }
 
-char* binArray2hex(uint8_t * bin, int size) {
+char* binArray2hex(uint8_t * bin) {
     char * str = malloc(LENGTH_TEST/4);
     for (int i = 0; i < (LENGTH_TEST/4); i++) {
         int val = bin[i*4]*8 + bin[i*4+1]*4 + bin[i*4+2]*2 + bin[i*4+3]*1;
@@ -327,7 +327,7 @@ void test1(){
     uint8_t IVbin[64];
     hex2binArray(IVstr, IVbin);
     _construct(Kbin, IVbin, LENGTH_TEST);
-    char* result = binArray2hex(keystream, 0);
+    char* result = binArray2hex(keystream);
     printf("Generated keystream: %s\n", result);
     free(result);
     printf("Correct keystream:   %s\n", test);
@@ -344,7 +344,7 @@ void test2(){
     uint8_t IVbin[64];
     hex2binArray(IVstr, IVbin);
     _construct(Kbin, IVbin, LENGTH_TEST);
-    char* result = binArray2hex(keystream, 0);
+    char* result = binArray2hex(keystream);
     printf("Generated keystream: %s\n", result);
     free(result);
     printf("Correct keystream:   %s\n", test);
@@ -361,7 +361,7 @@ void test3(){
     uint8_t IVbin[64];
     hex2binArray(IVstr, IVbin);
     _construct(Kbin, IVbin, LENGTH_TEST);
-    char* result = binArray2hex(keystream, 0);
+    char* result = binArray2hex(keystream);
     printf("Generated keystream: %s\n", result);
     free(result);
     printf("Correct keystream:   %s\n", test);
