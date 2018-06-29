@@ -8,9 +8,9 @@
  */
 
 
-uint8_t K[120];
-uint8_t IV[64];
-uint8_t z[KEYSTREAM_SIZE];
+uint32_t K[120];
+uint32_t IV[64];
+uint32_t z[128];
 uint8_t L[KEYSTREAM_SIZE+128];
 uint8_t Q[KEYSTREAM_SIZE+128];
 uint8_t T[KEYSTREAM_SIZE+128];
@@ -23,19 +23,19 @@ uint8_t keystream[KEYSTREAM_SIZE];
 
 
 
-void _construct(uint8_t  *key, uint8_t *iv, int length){
-    for (int i =0;i<128; ++i){
+void _construct(uint8_t  *key, uint8_t *iv){
+    for (int i =0;i<KEYSTREAM_SIZE; ++i){
         z[i]=0;
     }
-    for(int i = 0; i <= 256; ++i){
+    for(int i = 0; i <KEYSTREAM_SIZE; ++i){
         L[i] = 0;
         Q[i] = 0;
         T[i] = 0;
         Ttilde[i] = 0;
         _initialization(key, iv);
     }
-    if(length > 0){
-        keysteamGeneration(length);
+    if(KEYSTREAM_SIZE > 0){
+        keysteamGeneration(KEYSTREAM_SIZE);
     }
 }
 
@@ -78,7 +78,7 @@ void loadIV(uint8_t *iv){
 void initRegisters(){
 
     for(int i = 0; i <=63; ++i){
-       B[0][i] = K[i]^IV[i];
+        B[0][i] = K[i]^IV[i];
     }
 
     for(int i = 64; i<=89; ++i){
@@ -86,11 +86,11 @@ void initRegisters(){
     }
 
     for(int i = 0; i <=28; ++i){
-       S[0][i] = K[i+90];
+        S[0][i] = K[i+90];
     }
 
-   S[0][29] = K[119] ^ (uint8_t )1;
-   S[0][30] = 1;
+    S[0][29] = K[119] ^ (uint8_t )1;
+    S[0][30] = 1;
 }
 
 void mixing(){
@@ -115,12 +115,12 @@ uint8_t a(){
              B[t][45] ^ B[t][54] ^ \
              B[t][71];
 
-	Q[t] = B[t][4]  * B[t][21] ^ \
+    Q[t] = B[t][4]  * B[t][21] ^ \
            B[t][9]  * B[t][52] ^ \
            B[t][18] * B[t][37] ^ \
            B[t][44] * B[t][76];
 
-	T[t] = B[t][5]  ^ B[t][8]  * \
+    T[t] = B[t][5]  ^ B[t][8]  * \
            B[t][82] ^ B[t][34] * \
            B[t][67] * B[t][73] ^ \
            B[t][2]  * B[t][28] * \
@@ -135,13 +135,13 @@ uint8_t a(){
            B[t][43] * B[t][57] * \
            B[t][66] * B[t][78];
 
-	Ttilde[t] = S[t][23] ^ S[t][3]  * \
+    Ttilde[t] = S[t][23] ^ S[t][3]  * \
                 S[t][16] ^ S[t][9]  * \
                 S[t][13] * B[t][48] ^ \
                 S[t][1]  * S[t][24] * \
                 B[t][38] * B[t][63];
 
-		return L[t] ^ Q[t] ^ T[t] ^ Ttilde[t];
+    return L[t] ^ Q[t] ^ T[t] ^ Ttilde[t];
 }
 
 uint8_t NFSR2(){
@@ -214,7 +214,7 @@ uint8_t NFSR1(){
 void keyadd(){
 
     for(int i = 0; i <= 89; ++i){
-        B[129][i] =  B[128][i] ^ K[i];
+        B[129][i] = (uint8_t) (B[128][i] ^ K[i]);
     }
 
     for(int i = 0; i <= 29; ++i){
@@ -242,11 +242,11 @@ void diffusion(){
 
 void keysteamGeneration(int length){
 
-    for(int i = 0 ; i <KEYSTREAM_SIZE+128; ++i){
+    for(int i = 0 ; i <KEYSTREAM_SIZE; ++i){
         keystream[i] = 0;
     }
 
-    for(int i = 0; i <= length; ++i){
+    for(int i = 0; i < length; ++i){
         keystream[i] = a();
         diffusion();
         ++t;
@@ -283,9 +283,10 @@ uint8_t* getKeystream(){
 }
 
 char* binArray2hex(uint8_t * bin) {
-    char * str = malloc(LENGTH_TEST/4);
-    for (int i = 0; i < (LENGTH_TEST/4); i++) {
-        int val = bin[i*4]*8 + bin[i*4+1]*4 + bin[i*4+2]*2 + bin[i*4+3]*1;
+    char * str = calloc(KEYSTREAM_SIZE/4, sizeof(char));
+    uint16_t val = 0;
+    for (uint8_t i = 0; i < KEYSTREAM_SIZE/4; i++) {
+        val = bin[i*4]*8 + bin[i*4+1]*4 + bin[i*4+2]*2 + bin[i*4+3]*1;
         sprintf(str+i, "%x", val);
     }
     return str;
@@ -302,13 +303,14 @@ uint8_t hex2int(char ch) {
 }
 
 void hex2binArray(char* hex, uint8_t * bin) {
-    for (int i = 0; i < strlen(hex); ++i){
-        int val = hex2int(hex[i]);
+    for (uint8_t i = 0; i < strlen(hex); ++i){
+        uint16_t val = hex2int(hex[i]);
 
         bin[i*4 + 3] = (uint8_t) (val & 1);
         bin[i*4 + 2] = (uint8_t) ((val >> 1) & 1);
         bin[i*4 + 1] = (uint8_t) ((val >> 2) & 1);
         bin[i*4 + 0] = (uint8_t) ((val >> 3) & 1);
+
     }
 }
 
@@ -318,19 +320,25 @@ int main() {
 }
 
 void test1(){
+
     printf("Test 1\n");
-    char *Kstr = "0000000000000000FFFFFFFFFFFFFF";
-    char *IVstr = "FFFFFFFFFFFFFFFF";
-    uint8_t Kbin[120];
+    char *Kstr = "0000000000000000ffffffffffffff";
+    char *IVstr = "ffffffffffffffff";
+    uint8_t Kbin[122];
     char* test= "4d190941816f942358f0d164f4eceb09";
     hex2binArray(Kstr, Kbin);
-    uint8_t IVbin[64];
+    uint8_t IVbin[66];
     hex2binArray(IVstr, IVbin);
-    _construct(Kbin, IVbin, LENGTH_TEST);
+    _construct(Kbin, IVbin);
+    for(int i = 0; i< 120; i++){
+        printf("%x",K[i]);
+    }
+    printf("\n");
     char* result = binArray2hex(keystream);
     printf("Generated keystream: %s\n", result);
     free(result);
     printf("Correct keystream:   %s\n", test);
+    printf("\n\n");
     t=0;
 }
 
@@ -338,38 +346,83 @@ void test2(){
     printf("Test 2\n");
     char *Kstr = "7893257383493a0b0f030939409205";
     char *IVstr = "6969696969696969";
-    uint8_t Kbin[120];
+    uint8_t Kbin[122];
     char* test= "50161073d0e2cb919f09707b98ceea99";
     hex2binArray(Kstr, Kbin);
-    uint8_t IVbin[64];
+    uint8_t IVbin[66];
     hex2binArray(IVstr, IVbin);
-    _construct(Kbin, IVbin, LENGTH_TEST);
+
+    _construct(Kbin, IVbin);
+    for(int i = 0; i< 120; i++){
+        printf("%x",K[i]);
+    }
+    printf("\n");
     char* result = binArray2hex(keystream);
     printf("Generated keystream: %s\n", result);
     free(result);
     printf("Correct keystream:   %s\n", test);
+    printf("\n\n");
     t=0;
 }
 
 void test3(){
     printf("Test 3\n");
-    char *Kstr = "12342f5f1234f23f234f5f234f1f41";
-    char *IVstr = "8498723987987f91";
-    uint8_t Kbin[120];
-    char* test= "e9eac69c4871f44edb1885e00270e5cc";
+    char *Kstr = "000000000000000000000000000000";
+    char *IVstr = "0000000000000000";
+    uint8_t Kbin[122];
+    char* test= "b6304ca4ca276b3355ec2e10968e84b3";
     hex2binArray(Kstr, Kbin);
-    uint8_t IVbin[64];
+    uint8_t IVbin[66];
     hex2binArray(IVstr, IVbin);
-    _construct(Kbin, IVbin, LENGTH_TEST);
+    _construct(Kbin, IVbin);
+    for(int i = 0; i< 120; i++){
+        printf("%x",K[i]);
+    }
+    printf("\n");
     char* result = binArray2hex(keystream);
     printf("Generated keystream: %s\n", result);
     free(result);
     printf("Correct keystream:   %s\n", test);
+    printf("\n\n");
     t=0;
 }
 
-void test(){
+void test4(){
+    printf("Test 4\n");
+    char *Kstr = "0123456789abcdef0123456789abcd";
+    char *IVstr = "abcdef0123456789";
+    uint8_t Kbin[122];
+    char* test= "983311a97831586548209dafbf26fc93";
+    hex2binArray(Kstr, Kbin);
+    uint8_t IVbin[66];
+    hex2binArray(IVstr, IVbin);
+    _construct(Kbin, IVbin);
+    for(int i = 0; i< 120; i++){
+        printf("%x",K[i]);
+    }
+    printf("\n");
+    char* result = binArray2hex(keystream);
+    printf("Generated keystream: %s\n", result);
+    free(result);
+    printf("Correct keystream:   %s\n", test);
+    printf("\n");
+    t=0;
+}
+
+
+
+void test(void)
+{
+
+    printf("\n\n\n\n");
+    printf("╦  ╦╔═╗╔═╗╦═╗╔╦╗\n║  ║╔═╝╠═╣╠╦╝ ║║\n╩═╝╩╚═╝╩ ╩╩╚══╩╝");
+    printf("by Ivan Kozlov, 2018\n");
+    printf("https://github.com/KozlovIvan/LizardASM-arm-cortex-M4\n");
+    printf("\n");
     test1();
     test2();
     test3();
+    test4();
+    printf("Done!\n─────────────────────────────────────────────────────────");
+
 }

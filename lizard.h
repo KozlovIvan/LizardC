@@ -17,7 +17,7 @@ void keyadd();
 void diffusion();
 uint8_t NFSR1();
 uint8_t NFSR2();
-void _construct(uint8_t  *key, uint8_t *iv, int length);
+void _construct(uint8_t  *key, uint8_t *iv);
 void _initialization(uint8_t *key, uint8_t *iv);
 void keysteamGeneration(int length);
 uint8_t* keystreamGenerationSpecification(int length);
